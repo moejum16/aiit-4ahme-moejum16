@@ -5,4 +5,4 @@ Hier sind alle Java Projekte die im AIIt Unterricht erstelll werden
 - Julian Mörth
 
 ## License
-Dieses Programm ist unter der 
+Dieses Projekt ist unter der MIT Lizenz lizenziert - In der [LICENSE.md](https://github.com/maichm16/aiit-4ahme-maichm16/blob/master/LICENSE) Datei finden Sie weitere Details.
