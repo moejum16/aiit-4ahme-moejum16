@@ -3,31 +3,38 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package k22k22_2.k22_2_2;
+package k22kk22_2.k22_2_04;
 
 /**
  *
  * @author Julian
  */
-public class MyTread2202 extends Thread {
+public class A2204 {
+    int irgendwas;
+}
+
+class B2204 extends A2204 implements Runnable{
     public void run(){
         int i = 0;
-        while (true){
+        while(true){
+            if(Thread.interrupted()){
+                break;
+            }
             System.out.println(i++);
         }
     }
 }
 
-
-public class Listening2202 {
+public class Listing2204 {
     public static void main(String[] args) {
-        MyTread2202 t = new MyTread2202();
+        B2204 b = new B2204();
+        Thread t = new Thread(b);
         t.start();
         try{
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException e){
-            //nichts
+            
         }
-        t.stop();
+        t.interrupt();
     }
 }
