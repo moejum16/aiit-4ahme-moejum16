@@ -11,17 +11,13 @@ import java.net.Socket;
  *
  * @author Julian
  */
-public class ConnectionHandler {
+public class ConnectionHandler implements Runnable{
     private Socket socket;
     private boolean master;
 
-    public ConnectionHandler(Socket socket, boolean master) {
-        this.socket = socket;
-        this.master = master;
-    }
 
     public ConnectionHandler(Socket socket){
-        
+        this.socket = socket;
     }
 
     public boolean isClosed() {
@@ -34,5 +30,13 @@ public class ConnectionHandler {
     
     public void run(){
         
+        
+        try{
+            while(client.stop == false){
+                
+            }
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 }
