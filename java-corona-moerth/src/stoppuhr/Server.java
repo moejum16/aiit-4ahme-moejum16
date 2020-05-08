@@ -5,16 +5,19 @@
  */
 package stoppuhr;
 
+import com.google.gson.Gson;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import jdk.nashorn.internal.ir.RuntimeNode;
+import org.omg.CORBA.Request;
 
-/**
- *
- * @author Julian
- */
+
 public class Server {
     
     private ServerSocket serverSocket;
@@ -30,9 +33,17 @@ public class Server {
         serverSocket = new ServerSocket(port);
         timeOffset = 0;
         while (true){
-            Socket clientSocket = serverSocket.accept();
-            ConnectionHandler h = new ConnectionHandler(clientSocket);
-            handlers.add(h);
+            final Socket clientSocket = serverSocket.accept();
+            
+            //überprüfung von clients welche schon geschlossen sind
+            
+            if(handlers.size() > 3){
+                ConnectionHandler h = new ConnectionHandler(clientSocket);
+                new Thread(h).start();
+                handlers.add(h);
+            } else{
+                clientSocket.close();
+            }
         }
     }
     
@@ -41,14 +52,17 @@ public class Server {
     }
     
     public long getTimerMillis(){
-        return timeOffset;
+        if(startMillis == 0) {
+            return timeOffset;
+        }else{
+            return timeOffset + (System.currentTimeMillis()-startMillis);
+        }
     }
-    //------------------------------------------------------------------
+//------------------------------------------------------------------------
     
-    public class ConnectionHandler implements Runnable{
-        private Socket socket;
+    private class ConnectionHandler implements Runnable{
+        private final Socket socket;
         private boolean master;
-
 
         public ConnectionHandler(Socket socket){
             this.socket = socket;
@@ -62,19 +76,140 @@ public class Server {
             return master;
         }
 
+        @Override
         public void run(){
-
-
             try{
-                while(client.stop == false){
+                while(true){
+                    final BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    final String line = reader.readLine(); // zeichen werden in das attribut line gespeichert
 
+                    final Gson gson = new Gson();
+                    gson.toJson(line); // einkommenden Zeilen werden in ein Objekt gespeichert
+                    final Request r = gson.fromJson(line, Request.class); // neues Request Objekt, welches die Zeichen beinhaltet
+
+                    if(r.isMaster()){
+                        for (ConnectionHandler c : handlers){
+                            master = master;
+                            if(c != this && c.isMaster() == true){
+                                master = false;
+                                break;
+                            }
+                        }
+                    }
+                    if(master == true){
+                        if(r.isStart()){
+                            startMillis = System.currentTimeMillis();
+                        }
+                        if(r.isClear()){
+                            if(isTimerRunning()){
+                                startMillis = System.currentTimeMillis();
+                            }
+                            timeOffset = 0;
+                        }
+                        if(r.isStop()){
+                            timeOffset = getTimerMillis();
+                            startMillis = 0;
+                        }
+                        if(r.isEnd()){
+                            //serverapplication schließen
+                            handlers.remove(this);
+                        }
+                    }
                 }
-            } catch (Exception ex){
+            } catch(Exception ex){
                 ex.printStackTrace();
             }
         }
     }
-    //--------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+    
+public class Request {
+    private boolean master;
+    private boolean start;
+    private boolean stop;
+    private boolean clear;
+    private boolean end;
+
+    public boolean isMaster() {
+        return master;
+    }
+
+    public boolean isStart() {
+        return start;
+    }
+
+    public boolean isStop() {
+        return stop;
+    }
+
+    public boolean isClear() {
+        return clear;
+    }
+
+    public boolean isEnd() {
+        return end;
+    }
+
+    public void setMaster(boolean master) {
+        this.master = master;
+    }
+
+    public void setStart(boolean start) {
+        this.start = start;
+    }
+
+    public void setStop(boolean stop) {
+        this.stop = stop;
+    }
+
+    public void setClear(boolean clear) {
+        this.clear = clear;
+    }
+
+    public void setEnd(boolean end) {
+        this.end = end;
+    }
+}
+    
+//-------------------------------------------------------------------------
+public class Response{
+    private boolean master;
+    private boolean count;
+    private boolean running;
+    private long time;
+
+        public boolean isMaster() {
+            return master;
+        }
+
+        public boolean isCount() {
+            return count;
+        }
+
+        public boolean isRunning() {
+            return running;
+        }
+
+        public long getTime() {
+            return time;
+        }
+
+        public void setMaster(boolean master) {
+            this.master = master;
+        }
+
+        public void setCount(boolean count) {
+            this.count = count;
+        }
+
+        public void setRunning(boolean running) {
+            this.running = running;
+        }
+
+        public void setTime(long time) {
+            this.time = time;
+        }
+}
     
     public static void main(String[] args) throws IOException {
         Server server = new Server();
