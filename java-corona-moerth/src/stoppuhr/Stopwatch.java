@@ -33,7 +33,7 @@ public class Stopwatch extends javax.swing.JFrame {
         jslidRefresh = new javax.swing.JSlider();
         jl1ms = new javax.swing.JLabel();
         jpanCenter = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
+        jtfClock = new javax.swing.JTextField();
         jpanEast = new javax.swing.JPanel();
         jbutConnect = new javax.swing.JButton();
         jbutDisconnect = new javax.swing.JButton();
@@ -59,16 +59,20 @@ public class Stopwatch extends javax.swing.JFrame {
 
         jpanCenter.setLayout(new java.awt.BorderLayout());
 
-        jTextField1.setFont(new java.awt.Font("Tahoma", 0, 48)); // NOI18N
-        jTextField1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField1.setText("1");
-        jpanCenter.add(jTextField1, java.awt.BorderLayout.CENTER);
+        jtfClock.setFont(new java.awt.Font("Tahoma", 0, 48)); // NOI18N
+        jtfClock.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jpanCenter.add(jtfClock, java.awt.BorderLayout.CENTER);
 
         getContentPane().add(jpanCenter, java.awt.BorderLayout.CENTER);
 
         jpanEast.setLayout(new java.awt.GridBagLayout());
 
         jbutConnect.setText("Connect");
+        jbutConnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbutConnectActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
@@ -76,6 +80,11 @@ public class Stopwatch extends javax.swing.JFrame {
         jpanEast.add(jbutConnect, gridBagConstraints);
 
         jbutDisconnect.setText("Disconnect");
+        jbutDisconnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbutDisconnectActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -85,6 +94,11 @@ public class Stopwatch extends javax.swing.JFrame {
         jpanEast.add(jbutDisconnect, gridBagConstraints);
 
         jbutStart.setText("Start");
+        jbutStart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbutStartActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -94,6 +108,11 @@ public class Stopwatch extends javax.swing.JFrame {
         jpanEast.add(jbutStart, gridBagConstraints);
 
         jbutStop.setText("Stop");
+        jbutStop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbutStopActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
@@ -103,6 +122,11 @@ public class Stopwatch extends javax.swing.JFrame {
         jpanEast.add(jbutStop, gridBagConstraints);
 
         jbutClear.setText("Clear");
+        jbutClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbutClearActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
@@ -112,6 +136,11 @@ public class Stopwatch extends javax.swing.JFrame {
         jpanEast.add(jbutClear, gridBagConstraints);
 
         jbutEnd.setText("End");
+        jbutEnd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbutEndActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
@@ -124,6 +153,30 @@ public class Stopwatch extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jbutConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutConnectActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jbutConnectActionPerformed
+
+    private void jbutDisconnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutDisconnectActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jbutDisconnectActionPerformed
+
+    private void jbutStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutStartActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jbutStartActionPerformed
+
+    private void jbutStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutStopActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jbutStopActionPerformed
+
+    private void jbutClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutClearActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jbutClearActionPerformed
+
+    private void jbutEndActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutEndActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jbutEndActionPerformed
 
     /**
      * @param args the command line arguments
@@ -156,12 +209,12 @@ public class Stopwatch extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Stopwatch().setVisible(true);
+                stoppuhr.Server(8080);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JButton jbutClear;
     private javax.swing.JButton jbutConnect;
     private javax.swing.JButton jbutDisconnect;
@@ -174,5 +227,6 @@ public class Stopwatch extends javax.swing.JFrame {
     private javax.swing.JPanel jpanEast;
     private javax.swing.JPanel jpanNorth;
     private javax.swing.JSlider jslidRefresh;
+    private javax.swing.JTextField jtfClock;
     // End of variables declaration//GEN-END:variables
 }
