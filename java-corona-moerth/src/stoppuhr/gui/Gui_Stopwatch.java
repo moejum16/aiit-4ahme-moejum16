@@ -3,18 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package stoppuhr;
+package stoppuhr.gui;
 
 /**
  *
  * @author Julian
  */
-public class Stopwatch extends javax.swing.JFrame {
+public class Gui_Stopwatch extends javax.swing.JFrame {
 
     /**
      * Creates new form Stopwatch
      */
-    public Stopwatch() {
+    public Gui_Stopwatch() {
         initComponents();
     }
 
@@ -33,7 +33,7 @@ public class Stopwatch extends javax.swing.JFrame {
         jslidRefresh = new javax.swing.JSlider();
         jl1ms = new javax.swing.JLabel();
         jpanCenter = new javax.swing.JPanel();
-        jtfClock = new javax.swing.JTextField();
+        jlClock = new javax.swing.JLabel();
         jpanEast = new javax.swing.JPanel();
         jbutConnect = new javax.swing.JButton();
         jbutDisconnect = new javax.swing.JButton();
@@ -57,11 +57,11 @@ public class Stopwatch extends javax.swing.JFrame {
 
         getContentPane().add(jpanNorth, java.awt.BorderLayout.NORTH);
 
-        jpanCenter.setLayout(new java.awt.BorderLayout());
+        jpanCenter.setLayout(new java.awt.GridBagLayout());
 
-        jtfClock.setFont(new java.awt.Font("Tahoma", 0, 48)); // NOI18N
-        jtfClock.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jpanCenter.add(jtfClock, java.awt.BorderLayout.CENTER);
+        jlClock.setFont(new java.awt.Font("Tahoma", 0, 50)); // NOI18N
+        jlClock.setText("0.000");
+        jpanCenter.add(jlClock, new java.awt.GridBagConstraints());
 
         getContentPane().add(jpanCenter, java.awt.BorderLayout.CENTER);
 
@@ -195,21 +195,22 @@ public class Stopwatch extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Stopwatch.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Gui_Stopwatch.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Stopwatch.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Gui_Stopwatch.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Stopwatch.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Gui_Stopwatch.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Stopwatch.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Gui_Stopwatch.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Stopwatch().setVisible(true);
-                stoppuhr.Server(8080);
+                new Gui_Stopwatch().setVisible(true);
+                //stoppuhr.Server(8080);
             }
         });
     }
@@ -223,10 +224,10 @@ public class Stopwatch extends javax.swing.JFrame {
     private javax.swing.JButton jbutStop;
     private javax.swing.JLabel jl1ms;
     private javax.swing.JLabel jl1s;
+    private javax.swing.JLabel jlClock;
     private javax.swing.JPanel jpanCenter;
     private javax.swing.JPanel jpanEast;
     private javax.swing.JPanel jpanNorth;
     private javax.swing.JSlider jslidRefresh;
-    private javax.swing.JTextField jtfClock;
     // End of variables declaration//GEN-END:variables
 }
