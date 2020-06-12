@@ -5,6 +5,14 @@
  */
 package stoppuhr.gui;
 
+import com.sun.security.ntlm.Client;
+import java.awt.Dimension;
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import stoppuhr.server.Server.Response;
+
 /**
  *
  * @author Julian
@@ -14,8 +22,19 @@ public class Gui_Stopwatch extends javax.swing.JFrame {
     /**
      * Creates new form Stopwatch
      */
-    public Gui_Stopwatch() {
+    public Gui_Stopwatch() throws IOException {
         initComponents();
+        setTitle("Client");
+        setMinimumSize(new Dimension(300, 250));
+        setSize(400, 300);
+        jlClock.setText("0.000");
+
+        jbutConnect.setEnabled(false);
+        jbutClear.setEnabled(false);
+        jbutDisconnect.setEnabled(false);
+        jbutEnd.setEnabled(false);
+        jbutStart.setEnabled(false);
+        jbutStop.setEnabled(false);
     }
 
     /**
@@ -155,27 +174,31 @@ public class Gui_Stopwatch extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbutConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutConnectActionPerformed
-        // TODO add your handling code here:
+        System.out.println("Button pressed" + Thread.currentThread().getId());
+        ConnectionWorker worker = new MyConnectionWorker(8080, "127.0.0.1");
+        worker.execute();
     }//GEN-LAST:event_jbutConnectActionPerformed
 
     private void jbutDisconnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutDisconnectActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_jbutDisconnectActionPerformed
 
     private void jbutStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutStartActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_jbutStartActionPerformed
 
     private void jbutStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutStopActionPerformed
-        // TODO add your handling code here:
+
+
     }//GEN-LAST:event_jbutStopActionPerformed
 
     private void jbutClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutClearActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_jbutClearActionPerformed
 
     private void jbutEndActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutEndActionPerformed
-        // TODO add your handling code here:
+
+
     }//GEN-LAST:event_jbutEndActionPerformed
 
     /**
@@ -207,12 +230,62 @@ public class Gui_Stopwatch extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Client.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Client.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Client.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Client.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Gui_Stopwatch().setVisible(true);
-                //stoppuhr.Server(8080);
+                try {
+                    new Gui_Stopwatch().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(Gui_Stopwatch.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
+    }
+    
+    private class MyConnectionWorker extends ConnectionWorker {
+
+        public MyConnectionWorker(int port, String hostName) {
+            super(port, hostName);
+        }
+
+        @Override
+        protected void done() {
+
+            try {
+                String ergebnis = (String) get();
+                System.out.println(ergebnis + " " + Thread.currentThread().getId());
+                jlClock.setText(ergebnis);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+        }
+
+        @Override
+        protected void process(List<Response> chunks) {
+            for (Response x : chunks) {
+                System.out.println("Process " + x + " Thread " + Thread.currentThread().getId());
+            }        }
+        
+        
+
+       
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -230,4 +303,6 @@ public class Gui_Stopwatch extends javax.swing.JFrame {
     private javax.swing.JPanel jpanNorth;
     private javax.swing.JSlider jslidRefresh;
     // End of variables declaration//GEN-END:variables
+    
+
 }

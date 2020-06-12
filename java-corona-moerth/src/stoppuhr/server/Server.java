@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package stoppuhr;
+package stoppuhr.server;
 
 import com.google.gson.Gson;
 import java.io.BufferedReader;
@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 import jdk.nashorn.internal.ir.RuntimeNode;
 import org.omg.CORBA.Request;
+
 
 public class Server {
 
@@ -228,6 +229,7 @@ public class Server {
     }
 
 //-------------------------------------------------------------------------
+   
     public class Response {
 
         private boolean master;
@@ -247,7 +249,7 @@ public class Server {
             return "Response{" + "master=" + master + ", count=" + count + ", running=" + running + ", time=" + time + '}';
         }
     }
-
+    
     //-----------------------------------------------------------------------
     public static void main(String[] args) throws IOException {
         Server server = new Server();
