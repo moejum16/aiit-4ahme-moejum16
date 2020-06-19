@@ -5,12 +5,14 @@
  */
 package stoppuhr.gui;
 
+import com.google.gson.Gson;
+import java.io.BufferedReader;
 import java.net.Socket;
-import java.util.List;
 import javax.swing.SwingWorker;
-import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import stoppuhr.server.Server;
 import stoppuhr.server.Server.Response;
-import stoppuhr.server.Server.Request;
 /**
  *
  * @author Julian
@@ -25,18 +27,27 @@ public class ConnectionWorker extends SwingWorker<Object, Response>{
 
     @Override
     protected String doInBackground() throws Exception{
-         System.out.println("Do in Background" + Thread.currentThread().getId());
-         Thread.sleep(1000);
+         /*System.out.println("Do in Background" + Thread.currentThread().getId());
+         Thread.sleep(1000);*/
          
-         publish(1);
-       
-         Thread.sleep(1000);
-         
-         publish(2);
-         
-         Thread.sleep(1000);
-        return "OK";
-
+         final Gson gson = new Gson();
+         final BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+         final OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream());
+         while(true){
+             try{
+                 final Server.Request req = new Server.Request();
+                 final String reqString = gson.toJson(req);
+                 writer.write(reqString);
+                 writer.flush();
+                 
+                 final String respString = reader.readLine();
+                 Response resp = gson.fromJson(respString, Response.class);
+                 publish(resp);
+                 
+                 Thread.sleep(1000);
+             } catch(Exception ex){
+                 ex.printStackTrace();
+             }
+         }
     }
-    
 }

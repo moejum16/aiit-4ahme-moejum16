@@ -244,6 +244,22 @@ public class Server {
             this.time = time;
         }
 
+        public boolean isMaster() {
+            return master;
+        }
+
+        public long getCount() {
+            return count;
+        }
+
+        public boolean isRunning() {
+            return running;
+        }
+
+        public long getTime() {
+            return time;
+        }
+
         @Override
         public String toString() {
             return "Response{" + "master=" + master + ", count=" + count + ", running=" + running + ", time=" + time + '}';

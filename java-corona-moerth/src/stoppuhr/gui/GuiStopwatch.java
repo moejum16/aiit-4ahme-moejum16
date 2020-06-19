@@ -5,24 +5,31 @@
  */
 package stoppuhr.gui;
 
+import com.google.gson.Gson;
 import com.sun.security.ntlm.Client;
 import java.awt.Dimension;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import stoppuhr.server.Server;
+import stoppuhr.server.Server.Request;
 import stoppuhr.server.Server.Response;
 
 /**
  *
  * @author Julian
  */
-public class Gui_Stopwatch extends javax.swing.JFrame {
+public class GuiStopwatch extends javax.swing.JFrame {
 
     /**
      * Creates new form Stopwatch
      */
-    public Gui_Stopwatch() throws IOException {
+    public GuiStopwatch() throws IOException {
         initComponents();
         setTitle("Client");
         setMinimumSize(new Dimension(300, 250));
@@ -218,14 +225,16 @@ public class Gui_Stopwatch extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Gui_Stopwatch.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GuiStopwatch.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Gui_Stopwatch.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GuiStopwatch.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Gui_Stopwatch.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GuiStopwatch.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Gui_Stopwatch.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GuiStopwatch.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
@@ -250,21 +259,24 @@ public class Gui_Stopwatch extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    new Gui_Stopwatch().setVisible(true);
+                    new GuiStopwatch().setVisible(true);
                 } catch (IOException ex) {
-                    Logger.getLogger(Gui_Stopwatch.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(GuiStopwatch.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
     }
-    
+
     private class MyConnectionWorker extends ConnectionWorker {
+
+        private Socket socket;
+        private Response resp;
 
         public MyConnectionWorker(int port, String hostName) {
             super(port, hostName);
         }
 
-        @Override
+        /*@Override
         protected void done() {
 
             try {
@@ -275,17 +287,52 @@ public class Gui_Stopwatch extends javax.swing.JFrame {
                 ex.printStackTrace();
             }
 
+        }*/
+        @Override
+        protected String doInBackground() throws Exception {
+            final Gson gson = new Gson();
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            final OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream());
+            while (true) {
+                try {
+                    final Server.Request req = new Server.Request();
+                    final String reqString = gson.toJson(req);
+                    writer.write(reqString);
+                    writer.flush();
+
+                    final String respString = reader.readLine();
+                    resp = gson.fromJson(respString, Response.class);
+                    publish(resp);
+
+                    Thread.sleep(1000);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
 
         @Override
-        protected void process(List<Response> chunks) {
-            for (Response x : chunks) {
+        protected void process(List<Response> list) {
+            /*for (Response x : list) {
                 System.out.println("Process " + x + " Thread " + Thread.currentThread().getId());
             }        }
-        
-        
+             */
+            Response resp = list.get(0);
 
-       
+            if (resp.isMaster()) {
+                jbutClear.setEnabled(true);
+                jbutConnect.setEnabled(false);
+                jbutDisconnect.setEnabled(true);
+                jbutEnd.setEnabled(true);
+                jbutStart.setEnabled(true);
+                jbutStop.setEnabled(true);
+            }
+
+            if (resp.isRunning()) {
+                jlClock.setText(String.format("%.3f", resp.getTime()));
+            }
+        }
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -303,6 +350,5 @@ public class Gui_Stopwatch extends javax.swing.JFrame {
     private javax.swing.JPanel jpanNorth;
     private javax.swing.JSlider jslidRefresh;
     // End of variables declaration//GEN-END:variables
-    
 
 }
