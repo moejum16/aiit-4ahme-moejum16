@@ -16,6 +16,7 @@ import java.net.Socket;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import stoppuhr.server.Server;
 import stoppuhr.server.Server.Request;
 import stoppuhr.server.Server.Response;
@@ -182,7 +183,12 @@ public class GuiStopwatch extends javax.swing.JFrame {
 
     private void jbutConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutConnectActionPerformed
         System.out.println("Button pressed" + Thread.currentThread().getId());
-        ConnectionWorker worker = new MyConnectionWorker(8080, "127.0.0.1");
+        ConnectionWorker worker = null;
+        try {
+            worker = new MyConnectionWorker(8080, "127.0.0.1");
+        } catch (IOException ex) {
+            Logger.getLogger(GuiStopwatch.class.getName()).log(Level.SEVERE, null, ex);
+        }
         worker.execute();
     }//GEN-LAST:event_jbutConnectActionPerformed
 
@@ -196,7 +202,6 @@ public class GuiStopwatch extends javax.swing.JFrame {
 
     private void jbutStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutStopActionPerformed
 
-
     }//GEN-LAST:event_jbutStopActionPerformed
 
     private void jbutClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutClearActionPerformed
@@ -204,7 +209,6 @@ public class GuiStopwatch extends javax.swing.JFrame {
     }//GEN-LAST:event_jbutClearActionPerformed
 
     private void jbutEndActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutEndActionPerformed
-
 
     }//GEN-LAST:event_jbutEndActionPerformed
 
@@ -272,11 +276,11 @@ public class GuiStopwatch extends javax.swing.JFrame {
         private Socket socket;
         private Response resp;
 
-        public MyConnectionWorker(int port, String hostName) {
+        public MyConnectionWorker(int port, String hostName) throws IOException {
             super(port, hostName);
         }
 
-        /*@Override
+        @Override
         protected void done() {
 
             try {
@@ -285,54 +289,33 @@ public class GuiStopwatch extends javax.swing.JFrame {
                 jlClock.setText(ergebnis);
             } catch (Exception ex) {
                 ex.printStackTrace();
+                JOptionPane.showMessageDialog(GuiStopwatch.this, "Fehler", "Fehler beim Beenden (done)", JOptionPane.ERROR_MESSAGE);
             }
 
-        }*/
-        @Override
-        protected String doInBackground() throws Exception {
-            final Gson gson = new Gson();
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            final OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream());
-            while (true) {
-                try {
-                    final Server.Request req = new Server.Request();
-                    final String reqString = gson.toJson(req);
-                    writer.write(reqString);
-                    writer.flush();
-
-                    final String respString = reader.readLine();
-                    resp = gson.fromJson(respString, Response.class);
-                    publish(resp);
-
-                    Thread.sleep(1000);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
         }
 
         @Override
         protected void process(List<Response> list) {
-            /*for (Response x : list) {
-                System.out.println("Process " + x + " Thread " + Thread.currentThread().getId());
-            }        }
-             */
-            Response resp = list.get(0);
-
-            if (resp.isMaster()) {
-                jbutClear.setEnabled(true);
-                jbutConnect.setEnabled(false);
-                jbutDisconnect.setEnabled(true);
-                jbutEnd.setEnabled(true);
-                jbutStart.setEnabled(true);
-                jbutStop.setEnabled(true);
-            }
-
-            if (resp.isRunning()) {
-                jlClock.setText(String.format("%.3f", resp.getTime()));
+            Response response = list.get(0);
+            
+            for(Response r : list){
+                System.out.println("Process" + r + "Thread" + Thread.currentThread().getName());
+                if(r.isMaster()){
+                    jbutStart.setEnabled(true);
+                    jbutClear.setEnabled(false);
+                    jbutConnect.setEnabled(false);
+                    jbutDisconnect.setEnabled(false);
+                    jbutEnd.setEnabled(false);
+                    jbutStop.setEnabled(false);
+                } else {
+                    
+                }
+                if(response.isRunning()){
+                    jlClock.setText(String.format("%.3f", response.getTime()));
+                }
+                
             }
         }
-
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

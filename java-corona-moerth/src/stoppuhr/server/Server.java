@@ -113,7 +113,7 @@ public class Server {
                     System.out.println(req);
                     
                     if(req.master != null){
-                        if (req.isMaster()) {
+                        if (req.master) {
                             ConnectionHandler currentMaster = null;
                             synchronized (handlers){
                                 for (ConnectionHandler c : handlers) {
@@ -201,6 +201,11 @@ public class Server {
         public Boolean stop;
         public Boolean clear;
         public Boolean end;
+
+        public Request() {
+        }
+        
+        /*
         
         public boolean isMaster(){
             return master != null && master;
@@ -220,12 +225,12 @@ public class Server {
         
         public boolean isEnd(){
             return end != null && end;
-        }
+        }*/
 
-        @Override
+        /*@Override
         public String toString() {
             return "Request{" + "master=" + master + ", start=" + start + ", stop=" + stop + ", clear=" + clear + ", end=" + end + '}';
-        }
+        }*/
     }
 
 //-------------------------------------------------------------------------

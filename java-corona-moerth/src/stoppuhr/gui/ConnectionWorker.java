@@ -7,11 +7,13 @@ package stoppuhr.gui;
 
 import com.google.gson.Gson;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.net.Socket;
 import javax.swing.SwingWorker;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import stoppuhr.server.Server;
+import stoppuhr.server.Server.Request;
 import stoppuhr.server.Server.Response;
 /**
  *
@@ -21,12 +23,12 @@ public class ConnectionWorker extends SwingWorker<Object, Response>{
 
     private Socket socket;
 
-    public ConnectionWorker(int port, String hostName) {
+    public ConnectionWorker(int port, String hostName) throws IOException {
         
     }
 
     @Override
-    protected String doInBackground() throws Exception{
+    protected Object doInBackground() throws Exception{
          /*System.out.println("Do in Background" + Thread.currentThread().getId());
          Thread.sleep(1000);*/
          
@@ -35,9 +37,10 @@ public class ConnectionWorker extends SwingWorker<Object, Response>{
          final OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream());
          while(true){
              try{
-                 final Server.Request req = new Server.Request();
+                 Server server = new Server();
+                 final Server.Request req = new Request();
                  final String reqString = gson.toJson(req);
-                 writer.write(reqString);
+                 writer.write(reqString+ "\n");
                  writer.flush();
                  
                  final String respString = reader.readLine();
