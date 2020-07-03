@@ -76,6 +76,7 @@ public class GuiStopwatch extends javax.swing.JFrame {
         jl1s.setText("Refreshrate 1s");
         jpanNorth.add(jl1s, java.awt.BorderLayout.WEST);
 
+        jslidRefresh.setMaximum(99);
         jslidRefresh.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jpanNorth.add(jslidRefresh, java.awt.BorderLayout.CENTER);
 
@@ -280,6 +281,44 @@ public class GuiStopwatch extends javax.swing.JFrame {
             super(port, hostName);
         }
 
+
+        @Override
+        protected void process(List<Response> list) {
+            Response response = list.get(0);
+            
+            for(Response r : list){
+                System.out.println("Process" + r + "Thread" + Thread.currentThread().getName());
+                if(r.isMaster()){
+                    jbutStart.setEnabled(true);
+                    jbutClear.setEnabled(true);
+                    jbutConnect.setEnabled(false);
+                    jbutDisconnect.setEnabled(true);
+                    jbutEnd.setEnabled(true);
+                    jbutStop.setEnabled(true);
+                } else {
+                    jbutStart.setEnabled(false);
+                    jbutClear.setEnabled(false);
+                    jbutConnect.setEnabled(false);
+                    jbutDisconnect.setEnabled(true);
+                    jbutEnd.setEnabled(false);
+                    jbutStop.setEnabled(false);
+                }
+                if(response.isRunning()){
+                    jbutStart.setEnabled(false);
+                    jbutClear.setEnabled(true);
+                    jbutStop.setEnabled(true);
+                } else {
+                    jbutStart.setEnabled(true);
+                    jbutClear.setEnabled(false);
+                    jbutStop.setEnabled(false);
+                }
+                
+                jlClock.setText(String.format("%.3f", response.getTime()));
+
+                
+            }
+        }
+        
         @Override
         protected void done() {
 
@@ -292,29 +331,6 @@ public class GuiStopwatch extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(GuiStopwatch.this, "Fehler", "Fehler beim Beenden (done)", JOptionPane.ERROR_MESSAGE);
             }
 
-        }
-
-        @Override
-        protected void process(List<Response> list) {
-            Response response = list.get(0);
-            
-            for(Response r : list){
-                System.out.println("Process" + r + "Thread" + Thread.currentThread().getName());
-                if(r.isMaster()){
-                    jbutStart.setEnabled(true);
-                    jbutClear.setEnabled(false);
-                    jbutConnect.setEnabled(false);
-                    jbutDisconnect.setEnabled(false);
-                    jbutEnd.setEnabled(false);
-                    jbutStop.setEnabled(false);
-                } else {
-                    
-                }
-                if(response.isRunning()){
-                    jlClock.setText(String.format("%.3f", response.getTime()));
-                }
-                
-            }
         }
     }
 
